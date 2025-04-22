@@ -96,7 +96,7 @@ export default function Home() {
 									<td className="border border-inherit ">
 										<Author />
 									</td>
-									<td className="border hidden border-inherit ">
+									<td className="border hidden md:block border-inherit ">
 										<Author />
 									</td>
 								</tr>
