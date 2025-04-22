@@ -1,15 +1,19 @@
 import React from 'react';
 import HeroImg from '../assets/images/dimitar-belchev-fRBpWLAcWIY-unsplash 1.png';
+import Person from '../assets/images/person.png';
 
 import Article from '../components/Article';
 import { Link } from 'react-router-dom';
+import Author from '../components/Author';
 export default function Home() {
 	return (
 		<div className="container">
 			<div>
 				<h1 className="header">ART & LIFE</h1>
-				<div className="p-5 bg-black flex">
-					<p className="font-bold text-white w-[13%]">NEWS TICKER+++</p>
+				<div className="py-5 px-0 md:p-5 bg-black flex">
+					<p className="font-bold text-white w-[70%] px-2 md:px-[unset] text-sm md:w-[13%]  bg-black">
+						NEWS TICKER+++
+					</p>
 					<marquee
 						direction="right"
 						scrollamount="8"
@@ -38,9 +42,9 @@ export default function Home() {
 					<Article />
 					<Article />
 				</div>
-				<div className="pt-10 pb-17 border-b-2">
+				<div className="pt-10 pb-17 px-6 md:px-0 border-b-2">
 					<Link
-						to="/all-articles"
+						to="/articles"
 						className="flex items-center gap-2 font-bold transition-all duration-300 hover:gap-4 cursor-pointer w-fit">
 						All Articles
 						<span className="mt-[1px]">
@@ -50,7 +54,7 @@ export default function Home() {
 								viewBox="0 0 24 24"
 								strokeWidth="3"
 								stroke="currentColor"
-								class="size-4">
+								className="size-4">
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
@@ -63,7 +67,7 @@ export default function Home() {
 
 				<div>
 					<div className="flex items-center justify-between">
-						<h2 className="font-bold text-9xl my-10">AUTHORS</h2>
+						<h2 className="sub-title my-10">AUTHORS</h2>
 						<Link
 							to="/authors"
 							className="flex items-center gap-2 font-bold transition-all duration-300 hover:gap-4 cursor-pointer">
@@ -75,7 +79,7 @@ export default function Home() {
 									viewBox="0 0 24 24"
 									strokeWidth="3"
 									stroke="currentColor"
-									class="size-4">
+									className="size-4">
 									<path
 										strokeLinecap="round"
 										strokeLinejoin="round"
@@ -84,6 +88,28 @@ export default function Home() {
 								</svg>
 							</span>
 						</Link>
+					</div>
+					<div className="flex flex-col items-center p-2 md:p-0">
+						<table className="border-collapse border border-black  w-[100%]">
+							<tbody>
+								<tr>
+									<td className="border border-inherit ">
+										<Author />
+									</td>
+									<td className="border hidden border-inherit ">
+										<Author />
+									</td>
+								</tr>
+								<tr>
+									<td className="border border-inherit ">
+										<Author />
+									</td>
+									<td className="border border-inherit hidden md:block ">
+										<Author />
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>

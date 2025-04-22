@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -8,8 +8,14 @@ import AddArticle from './pages/AddArticle';
 import ArticleDetails from './pages/ArticleDetails';
 import Authors from './pages/Authors';
 import AboutUs from './pages/AboutUs';
+import Footer from './components/footer';
+import Profile from './pages/Profile';
 
 function App() {
+	const location = useLocation();
+	const hideFooterFrom = ['/login', '/sign-up'];
+	const hide = hideFooterFrom.includes(location.pathname);
+
 	return (
 		<>
 			<Navbar />
@@ -19,7 +25,7 @@ function App() {
 					element={<Home />}
 				/>
 				<Route
-					path="/all-articles"
+					path="/articles"
 					element={<AllArticles />}
 				/>
 				<Route
@@ -35,7 +41,7 @@ function App() {
 					element={<Signup />}
 				/>
 				<Route
-					path="/article-details"
+					path="/article/:id"
 					element={<ArticleDetails />}
 				/>
 				<Route
@@ -43,10 +49,11 @@ function App() {
 					element={<Authors />}
 				/>
 				<Route
-					path="/about-us"
-					element={<AboutUs />}
+					path="/profile/:id"
+					element={<Profile />}
 				/>
 			</Routes>
+			{hide || <Footer />}
 		</>
 	);
 }

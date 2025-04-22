@@ -11,15 +11,112 @@ h5 {
 	font-family: 'Inter', sans-serif;
 }
 
+img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+input,
+label {
+	outline: none !important;
+}
+
+.header,
+.sub-header,
+.title,
+.sub-title,
+.main-title {
+	font-family: 'League Spartan', sans-serif;
+}
+
 .header {
-	font-size: 16.6rem;
+	font-size: 17rem;
+	line-height: 1.1;
+	font-weight: bold;
+	text-align: center;
+}
+
+.sub-header {
+	font-size: 2rem;
+	line-height: 1.1;
+	font-weight: bold;
+	text-align: center;
+}
+
+.title {
+	font-weight: bold;
+	font-size: 1.875rem;
+}
+
+.main-title {
+	font-size: 6rem;
+	font-weight: bold;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+.sub-title {
+	font-size: 8rem;
 	line-height: 1.1;
 	font-weight: bold;
 }
+.article + .article::before,
+.author + .author::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background-color: black;
+}
 
+.article + .article::before {
+	top: -15%;
+}
+.author + .author::before {
+	top: -5%;
+}
+
+@media (min-width: 576px) {
+	.container {
+		max-width: 989px;
+		margin: auto;
+	}
+}
 @media (min-width: 1366px) {
 	.container {
 		max-width: 1366px;
 		margin: auto;
+	}
+}
+
+@media (max-width: 1366px) {
+	.header {
+		font-size: 12rem;
+	}
+}
+
+@media (max-width: 992px) {
+	.header {
+		font-size: 10rem;
+	}
+	.article + .article::before {
+		top: -6%;
+	}
+	.author + .author::before {
+		top: 0%;
+	}
+	.sub-title {
+		font-size: 2.25rem;
+	}
+	.main-title {
+		font-size: 4rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.header {
+		font-size: 4rem;
 	}
 }
