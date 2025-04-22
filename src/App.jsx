@@ -8,8 +8,9 @@ import AddArticle from './pages/AddArticle';
 import ArticleDetails from './pages/ArticleDetails';
 import Authors from './pages/Authors';
 import AboutUs from './pages/AboutUs';
-import Footer from './components/footer';
+
 import Profile from './pages/Profile';
+import Footer from './components/Footer';
 
 function App() {
 	const location = useLocation();
