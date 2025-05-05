@@ -5,9 +5,34 @@ import Person from '../assets/images/person.png';
 import Article from '../components/Article';
 import { Link } from 'react-router-dom';
 import Author from '../components/Author';
+import useFetch from '../hooks/useFetch';
 export default function Home() {
+	const { data, loading, error } = useFetch(
+		'http://localhost:3000/articles?_limit=10'
+	);
 	return (
 		<div className="container">
+			<div
+				className="tooltip fixed bottom-20 end-20 z-1"
+				data-tip="Write new article">
+				<Link
+					to={'add-article'}
+					className="btn btn-circle bg-black text-white border-none btn-xl">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						strokeWidth={1.5}
+						stroke="currentColor"
+						className="size-9">
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M12 4.5v15m7.5-7.5h-15"
+						/>
+					</svg>
+				</Link>
+			</div>
 			<div>
 				<h1 className="header">ART & LIFE</h1>
 				<div className="py-5 px-0 md:p-5 bg-black flex">
@@ -36,11 +61,17 @@ export default function Home() {
 					/>
 				</div>
 				<div>
-					<Article />
-					<Article />
-					<Article />
-					<Article />
-					<Article />
+					{loading && (
+						<span className="loading loading-spinner loading-lg"></span>
+					)}
+					{data &&
+						!loading &&
+						data.map((article) => (
+							<Article
+								key={article.id}
+								article={article}
+							/>
+						))}
 				</div>
 				<div className="pt-10 pb-17 px-6 md:px-0 border-b-2">
 					<Link

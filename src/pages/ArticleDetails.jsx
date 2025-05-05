@@ -1,146 +1,105 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import HeroImg from '../assets/images/dimitar-belchev-fRBpWLAcWIY-unsplash 1.png';
-import Person from '../assets/images/person.png';
+import Avatar from '../assets/images/avatar.png';
 import Article from '../components/Article';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import PageHead from '../components/PageHead';
+import useFetch from '../hooks/useFetch';
+import { formatDate } from '../../utils/helper';
 
 export default function ArticleDetails() {
-	const goBack = () => {
-		history.back();
-	};
+	const [article, setArticle] = useState({});
+	const { id } = useParams('id');
+
+	const { data, loading, error } = useFetch(
+		`http://localhost:3000/articles/${id}`
+	);
+
+	useEffect(() => {
+		setArticle(data);
+	}, [data]);
+
+	if (loading) return <div>Loading...</div>;
 	return (
 		<div className="container">
 			<div>
-				<div className="flex items-center justify-between mt-10">
-					<div>
-						<button
-							className="	flex items-center gap-2 bg-white border-0 cursor-pointer font-bold"
-							onClick={goBack}>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth="3"
-								stroke="currentColor"
-								className="size-4">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-								/>
-							</svg>
-							GO BACK
-						</button>
-					</div>
-					<div>
-						<h2 className="sub-header">ARTICLE</h2>
-					</div>
-				</div>
+				<PageHead text={'article'} />
 				<div className="flex flex-col gap-15 xl:gap-30">
 					<div className="flex flex-col xl:flex-row justify-between mt-15">
-						<div className="w-[100%] xl:w-[32%]">
-							<h2 className="main-title">hope dies last</h2>
+						<div className="w-[100%] xl:w-[38%]">
+							<h2 className="main-title">{article?.title}</h2>
 						</div>
 						<div className="xl:w-[40%]">
-							<p style={{ lineHeight: '1.8' }}>
-								Lorem ipsum dolor sit amet consectetur adipisicing elit.
-								Accusantium exercitationem optio voluptatibus cumque adipisci
-								voluptatum magnam nostrum laudantium, natus, pariatur dicta
-								temporibus qui asperiores voluptas explicabo et harum maiores
-								ipsa!
-							</p>
+							<p style={{ lineHeight: '1.8' }}>{article?.description}</p>
 						</div>
 					</div>
 					<div className="flex justify-between">
 						<div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-7 text-gray-600">
 							<div className="flex items-center gap-2 text-[12px] md:text-sm ">
 								<p className="font-bold">Author</p>
-								<p>Hossam Mahmoud</p>
+								<p>{article?.author}</p>
 							</div>
 							<div className="flex items-center gap-2 text-[12px] md:text-sm">
 								<p className="font-bold">Date</p>
-								<p>16, March 2025</p>
+								<p>{formatDate(article?.date)}</p>
 							</div>
 						</div>
-						<div>
-							<button className="btn btn-outline rounded-3xl text-sm text-gray-700 hover:bg-white border-gray-400 hover:border-gray-400">
-								Art
-							</button>
+						<div className="flex gap-2 items-center">
+							{article?.tags?.map((tag) => (
+								<div className="badge badge-neutral badge-outline">{tag}</div>
+							))}
 						</div>
 					</div>
 				</div>
 				<div className="mt-5">
 					<div className="xl:h-[95vh]">
 						<img
-							src={HeroImg}
+							src={article?.image}
 							alt=""
 						/>
 					</div>
 				</div>
-				<div className="mt-20 flex flex-col items-center xl:items-start xl:flex-row gap-6 justify-center">
+				<div className="mt-20 flex flex-col items-center xl:items-start xl:flex-row gap-8 justify-center">
 					<div className="flex flex-col sm:w-[60%] xl:w-[25%]">
 						<div className="flex gap-4 items-center pb-4 mb-5 border-b-2 border-black">
 							<div className="xl:w-[30%] rounded-full overflow-hidden">
-								<img
-									className="w-[100%]"
-									src={Person}
-									alt=""
-								/>
+								{article?.authorImage ? (
+									<img
+										className="w-[100%]"
+										src={article?.authorImage}
+										alt=""
+									/>
+								) : (
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										strokeWidth={1.5}
+										stroke="currentColor"
+										className="size-[100%]">
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+										/>
+									</svg>
+								)}
 							</div>
 							<h3
 								className="xl:w-[30%] font-bold text-3xl md:text-5xl"
 								style={{ fontFamily: '"League Spartan", sans-serif' }}>
-								Hossam Mahmoud
+								{article?.author}
 							</h3>
 						</div>
 						<div className="flex flex-col gap-4">
 							<div className="flex justify-between">
 								<p className="font-bold">Date</p>
-								<p>5 Mar 2025</p>
-							</div>
-							<div className="flex justify-between">
-								<p className="font-bold">Job</p>
-								<p>Software Engineer</p>
+								<p>{formatDate(article?.date)}</p>
 							</div>
 						</div>
 					</div>
 					<div className="sm:w-[60%] xl:w-[50%] flex flex-col gap-3">
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus,
-							voluptatibus! Iste dolores a quibusdam nisi est fugit debitis
-							ullam facere molestiae quas illum cumque, eum provident doloremque
-							blanditiis, necessitatibus dicta!
-						</p>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus,
-							voluptatibus! Iste dolores a quibusdam nisi est fugit debitis
-							ullam facere molestiae quas illum cumque, eum provident doloremque
-							blanditiis, necessitatibus dicta!
-						</p>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus,
-							voluptatibus! Iste dolores a quibusdam nisi est fugit debitis
-							ullam facere molestiae quas illum cumque, eum provident doloremque
-							blanditiis, necessitatibus dicta!
-						</p>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus,
-							voluptatibus! Iste dolores a quibusdam nisi est fugit debitis
-							ullam facere molestiae quas illum cumque, eum provident doloremque
-							blanditiis, necessitatibus dicta!
-						</p>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus,
-							voluptatibus! Iste dolores a quibusdam nisi est fugit debitis
-							ullam facere molestiae quas illum cumque, eum provident doloremque
-							blanditiis, necessitatibus dicta!
-						</p>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus,
-							voluptatibus! Iste dolores a quibusdam nisi est fugit debitis
-							ullam facere molestiae quas illum cumque, eum provident doloremque
-							blanditiis, necessitatibus dicta!
-						</p>
+						{article?.body}
 					</div>
 				</div>
 				<hr className="text-black border-1 my-16" />
@@ -170,13 +129,13 @@ export default function ArticleDetails() {
 					</div>
 					<div className="flex lg:flex-row lg:flex-wrap flex-col gap-4">
 						<div className="lg:w-[32%]">
-							<Article vertical={true} />
+							{/* <Article vertical={true} /> */}
 						</div>
 						<div className="lg:w-[32%]">
-							<Article vertical={true} />
+							{/* <Article vertical={true} /> */}
 						</div>
 						<div className="lg:w-[32%]">
-							<Article vertical={true} />
+							{/* <Article vertical={true} /> */}
 						</div>
 					</div>
 				</div>

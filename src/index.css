@@ -31,7 +31,7 @@ label {
 }
 
 .header {
-	font-size: 17rem;
+	font-size: 15rem;
 	line-height: 1.1;
 	font-weight: bold;
 	text-align: center;
@@ -77,29 +77,46 @@ label {
 .author + .author::before {
 	top: -5%;
 }
+.container {
+	max-width: 90%;
+	margin: auto;
+}
 
 @media (min-width: 576px) {
 	.container {
-		max-width: 989px;
-		margin: auto;
+		max-width: 560px;
+	}
+}
+@media (min-width: 768px) {
+	.container {
+		max-width: 750px;
+	}
+}
+@media (min-width: 992px) {
+	.container {
+		max-width: 980px;
+	}
+}
+@media (min-width: 1280px) {
+	.container {
+		max-width: 1200px;
 	}
 }
 @media (min-width: 1366px) {
 	.container {
 		max-width: 1366px;
-		margin: auto;
 	}
 }
 
 @media (max-width: 1366px) {
 	.header {
-		font-size: 12rem;
+		font-size: 11rem;
 	}
 }
 
 @media (max-width: 992px) {
 	.header {
-		font-size: 10rem;
+		font-size: 9rem;
 	}
 	.article + .article::before {
 		top: -6%;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
-export default function Navbar() {
+export default function Navbar({ currentUser, logOut }) {
 	const [showSide, setShowSide] = useState(false);
 
 	const closeSide = () => {
@@ -11,6 +11,7 @@ export default function Navbar() {
 	const show = () => {
 		setShowSide(true);
 	};
+
 	return (
 		<nav className="">
 			<div className="flex items-center justify-between mt-5 ms-10 mb-5 md:mb-[unset] md:mt-10 md:ms-20 pe-3 md:pe-7 pb-3 border-b-2">
@@ -73,20 +74,47 @@ export default function Navbar() {
 							</ul>
 						</div>
 						<span className="w-[20px] h-[1.6px] bg-black mt-1 hidden md:block"></span>
-						<div className="flex items-center gap-2">
-							<Link
-								to="/login"
-								onClick={closeSide}
-								className="btn btn-outline btn-lg md:btn-md border-2 rounded-3xl hover:bg-white hover:border-black">
-								Login
-							</Link>
-							<Link
-								to="/sign-up"
-								onClick={closeSide}
-								className="btn btn-neutral btn-lg md:btn-md rounded-3xl">
-								Sign up
-							</Link>
-						</div>
+						{currentUser ? (
+							<div className="flex items-center gap-4">
+								<Link
+									onClick={closeSide}
+									to={`/profile/${currentUser.id}`}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										strokeWidth={1.5}
+										stroke="currentColor"
+										className="size-10">
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+										/>
+									</svg>
+								</Link>
+								<button
+									onClick={logOut}
+									className="btn btn-outline btn-lg md:btn-md border-2 rounded-3xl hover:bg-black hover:text-white hover:border-black">
+									Log out
+								</button>
+							</div>
+						) : (
+							<div className="flex items-center gap-2">
+								<Link
+									to="/login"
+									onClick={closeSide}
+									className="btn btn-outline btn-lg md:btn-md border-2 rounded-3xl hover:bg-white hover:border-black">
+									Login
+								</Link>
+								<Link
+									to="/sign-up"
+									onClick={closeSide}
+									className="btn btn-neutral btn-lg md:btn-md rounded-3xl">
+									Sign up
+								</Link>
+							</div>
+						)}
 					</div>
 				</div>
 				<button
