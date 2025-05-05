@@ -3,7 +3,9 @@ import Article from '../components/Article';
 import useFetch from '../hooks/useFetch';
 
 export default function AllArticles() {
-	const { data, loading, error } = useFetch('http://localhost:3000/articles');
+	const { data, loading, error } = useFetch(
+		'http://localhost:3000/api/articles'
+	);
 	const [show, setShow] = useState(false);
 	const showCategory = () => {
 		setShow(!show);
@@ -71,7 +73,8 @@ export default function AllArticles() {
 			</div>
 			<div className="">
 				{data &&
-					data.map((article) => (
+					data.articles &&
+					data.articles.map((article) => (
 						<Article
 							article={article}
 							key={article.id}

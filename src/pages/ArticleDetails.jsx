@@ -12,11 +12,11 @@ export default function ArticleDetails() {
 	const { id } = useParams('id');
 
 	const { data, loading, error } = useFetch(
-		`http://localhost:3000/articles/${id}`
+		`http://localhost:3000/api/articles/${id}`
 	);
 
 	useEffect(() => {
-		setArticle(data);
+		setArticle(data?.article);
 	}, [data]);
 
 	if (loading) return <div>Loading...</div>;
@@ -37,7 +37,9 @@ export default function ArticleDetails() {
 						<div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-7 text-gray-600">
 							<div className="flex items-center gap-2 text-[12px] md:text-sm ">
 								<p className="font-bold">Author</p>
-								<p>{article?.author}</p>
+								<p>
+									{article?.author?.fname} {article?.author?.lname}
+								</p>
 							</div>
 							<div className="flex items-center gap-2 text-[12px] md:text-sm">
 								<p className="font-bold">Date</p>
@@ -66,7 +68,7 @@ export default function ArticleDetails() {
 								{article?.authorImage ? (
 									<img
 										className="w-[100%]"
-										src={article?.authorImage}
+										src={article?.author?.authorImage || Avatar}
 										alt=""
 									/>
 								) : (
@@ -88,7 +90,7 @@ export default function ArticleDetails() {
 							<h3
 								className="xl:w-[30%] font-bold text-3xl md:text-5xl"
 								style={{ fontFamily: '"League Spartan", sans-serif' }}>
-								{article?.author}
+								{article?.author?.fname} {article?.author?.lname}
 							</h3>
 						</div>
 						<div className="flex flex-col gap-4">

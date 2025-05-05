@@ -3,7 +3,7 @@ import PageHead from '../components/PageHead';
 import HeroImg from '../assets/images/dimitar-belchev-fRBpWLAcWIY-unsplash 1.png';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { fetchData } from '../../utils/helper';
+import { fetchData, useAuth } from '../../utils/helper';
 import { toast, ToastContainer } from 'react-toastify';
 export default function AddArticle({ currentUser }) {
 	const ImageInputRef = useRef(null);
@@ -83,12 +83,12 @@ export default function AddArticle({ currentUser }) {
 		console.log(data);
 		const lastData = {
 			...data,
-			author: `${currentUser.fname} ${currentUser.lname}`,
+			user_id: currentUser._id,
 			date: new Date().toUTCString(),
 		};
 		console.log(lastData);
 		try {
-			const response = await fetchData('/articles', 'post', {
+			const response = await useAuth('/articles/add-article', 'post', {
 				...lastData,
 			});
 			console.log(response);

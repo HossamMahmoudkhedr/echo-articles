@@ -8,8 +8,10 @@ import Author from '../components/Author';
 import useFetch from '../hooks/useFetch';
 export default function Home() {
 	const { data, loading, error } = useFetch(
-		'http://localhost:3000/articles?_limit=10'
+		'http://localhost:3000/api/articles'
 	);
+
+	console.log(data);
 	return (
 		<div className="container">
 			<div
@@ -65,8 +67,9 @@ export default function Home() {
 						<span className="loading loading-spinner loading-lg"></span>
 					)}
 					{data &&
+						data?.articles &&
 						!loading &&
-						data.map((article) => (
+						data?.articles?.map((article) => (
 							<Article
 								key={article.id}
 								article={article}
@@ -96,7 +99,7 @@ export default function Home() {
 					</Link>
 				</div>
 
-				<div>
+				{/* <div>
 					<div className="flex items-center justify-between">
 						<h2 className="sub-title my-10">AUTHORS</h2>
 						<Link
@@ -142,7 +145,7 @@ export default function Home() {
 							</tbody>
 						</table>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);

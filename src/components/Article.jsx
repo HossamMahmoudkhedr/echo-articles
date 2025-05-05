@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { formatDate } from '../../utils/helper';
 
 export default function Article({ vertical, article }) {
+	console.log(article);
 	return (
 		<div
 			className={`relative flex flex-col items-center ${
@@ -36,7 +37,9 @@ export default function Article({ vertical, article }) {
 						} text-gray-600`}>
 						<div className="flex items-center gap-2 text-[12px] md:text-sm ">
 							<p className="font-bold">Author</p>
-							<p>{article.author}</p>
+							<p>
+								{article.author.fname} {article.author.lname}
+							</p>
 						</div>
 						<div className="flex items-center gap-2 text-[12px] md:text-sm">
 							<p className="font-bold">Date</p>
@@ -45,7 +48,7 @@ export default function Article({ vertical, article }) {
 					</div>
 					<div>
 						<Link
-							to={`/article/${article.id}`}
+							to={`/article/${article._id}`}
 							className="btn btn-outline border-1 rounded-3xl flex items-center gap-2 duration-300 transition-all font-normal hover:bg-white hover:gap-4 w-[fit-content]">
 							<span>READ MORE</span>
 							<span className="mt-[1px]">

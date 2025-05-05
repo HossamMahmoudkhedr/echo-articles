@@ -19,7 +19,7 @@ export default function Signup() {
 	const submit = async (data) => {
 		delete data.repassword;
 		try {
-			const res = await fetchData('/users', 'post', data);
+			const res = await fetchData('/authors/signup', 'post', data);
 			console.log(res);
 			toast.success(
 				'You have been signed in, you will be redirected to login page'

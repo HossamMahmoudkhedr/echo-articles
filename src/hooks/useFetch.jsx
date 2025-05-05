@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 function useFetch(url) {
 	const [data, setData] = useState(null);
@@ -12,7 +13,11 @@ function useFetch(url) {
 		setError(null);
 
 		axios
-			.get(url)
+			.get(url, {
+				headers: {
+					authorization: `Bearer ${Cookies.get('token')}`,
+				},
+			})
 			.then((res) => {
 				setLoading(false);
 				res.data && setData(res.data);

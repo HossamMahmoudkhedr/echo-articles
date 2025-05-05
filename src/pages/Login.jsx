@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import Cookies from 'js-cookie';
+import { fetchData } from '../../utils/helper';
 
 export default function Login() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -17,10 +18,9 @@ export default function Login() {
 
 	const submit = async (data) => {
 		try {
-			const response = await axios.post('http://localhost:3000/login', data);
-			console.log(response.data.accessToken);
+			const response = await fetchData('/authors/login', 'post', data);
 
-			Cookies.set('token', response.data.accessToken);
+			Cookies.set('token', response.data.token);
 			localStorage.setItem('user', JSON.stringify(response.data.user));
 			toast.success('You have been logged in');
 
