@@ -3,13 +3,21 @@ import PageHead from '../components/PageHead';
 import HeroImg from '../assets/images/dimitar-belchev-fRBpWLAcWIY-unsplash 1.png';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { fetchData, useAuth } from '../../utils/helper';
+import { useAuth } from '../../utils/helper';
 import { toast, ToastContainer } from 'react-toastify';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { article } from 'framer-motion/client';
 export default function AddArticle({ currentUser }) {
+	const [status, setStatus] = useState('add');
+	const { id } = useParams();
+	const location = useLocation();
+	const navigate = useNavigate();
 	const ImageInputRef = useRef(null);
 	// const [articleImage, setArticleImage] = useState(null);
 	const [imageLoading, setImageLoading] = useState(false);
+	const [pageLoading, setPageLoading] = useState(false);
 	const [tags, setTags] = useState([]);
+
 	const {
 		register,
 		handleSubmit,
@@ -23,7 +31,7 @@ export default function AddArticle({ currentUser }) {
 			title: '',
 			description: '',
 			body: '',
-			tags: '',
+			tags: [],
 		},
 	});
 
@@ -31,6 +39,32 @@ export default function AddArticle({ currentUser }) {
 		register('image', {
 			required: 'You have to add an image descripes the article',
 		});
+
+		if (location.pathname.split('/')[1] == 'edit-article') {
+			setStatus('edit');
+			setPageLoading(true);
+			useAuth(`/articles/${id}`)
+				.then((data) => {
+					const article = data.data.article;
+					reset({
+						image: article.image,
+						title: article.title,
+						description: article.description,
+						body: article.body,
+						tags: article.tags,
+					});
+
+					setTags(article.tags);
+					setPageLoading(false);
+				})
+				.catch((error) => {
+					setPageLoading(false);
+					console.log(error);
+					toast.error('Something went wrong, please try again');
+				});
+		} else {
+			setStatus('add');
+		}
 	}, []);
 
 	const handleClickImage = () => {
@@ -81,26 +115,48 @@ export default function AddArticle({ currentUser }) {
 
 	const submit = async (data) => {
 		console.log(data);
-		const lastData = {
-			...data,
-			user_id: currentUser._id,
-			date: new Date().toUTCString(),
-		};
-		console.log(lastData);
-		try {
-			const response = await useAuth('/articles/add-article', 'post', {
-				...lastData,
-			});
-			console.log(response);
-			toast.success('Article has been published');
-			reset();
-		} catch (error) {
-			console.log(error);
-			toast.error(error.response.data || 'Something went wrong!');
+		console.log(status);
+		if (status === 'add') {
+			const lastData = {
+				...data,
+				user_id: currentUser._id,
+				date: new Date().toUTCString(),
+			};
+			console.log(lastData);
+			try {
+				const response = await useAuth('/articles/add-article', 'post', {
+					...lastData,
+				});
+				console.log(response);
+				toast.success('Article has been published');
+				reset();
+			} catch (error) {
+				console.log(error);
+				toast.error('Something went wrong!');
+			}
+		} else {
+			try {
+				const res = await useAuth(`/articles/edit-article/${id}`, 'post', {
+					...data,
+				});
+				console.log(res);
+				toast.success('Article has been updated successfully');
+				setTimeout(() => {
+					navigate(`/article/${id}`);
+				}, 3000);
+			} catch (error) {
+				console.log(error);
+				toast.error('Something went wrong!');
+			}
 		}
 	};
 	return (
 		<div>
+			{pageLoading && (
+				<div className="fixed start-0 top-0 w-[100%] h-[100%] z-[1] bg-gray-300 flex justify-center items-center opacity-[0.5]">
+					<span className="loading loading-spinner loading-lg"></span>
+				</div>
+			)}
 			<ToastContainer />
 			<div className="container">
 				<div className="my-10">
@@ -219,12 +275,14 @@ export default function AddArticle({ currentUser }) {
 					<button
 						type="button"
 						onClick={handleSubmit(submit)}
-						disabled={isSubmitting}
+						disabled={isSubmitting || imageLoading}
 						className="btn btn-lg bg-black text-white self-end">
 						{isSubmitting ? (
 							<span className="loading loading-spinner loading-lg"></span>
-						) : (
+						) : status === 'add' ? (
 							'Publish'
+						) : (
+							'Edit'
 						)}
 					</button>
 				</form>

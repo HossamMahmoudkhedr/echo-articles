@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import HeroImg from '../assets/images/dimitar-belchev-fRBpWLAcWIY-unsplash 1.png';
 import Person from '../assets/images/person.png';
 
@@ -6,10 +6,27 @@ import Article from '../components/Article';
 import { Link } from 'react-router-dom';
 import Author from '../components/Author';
 import useFetch from '../hooks/useFetch';
-export default function Home() {
-	const { data, loading, error } = useFetch(
-		'http://localhost:3000/api/articles'
-	);
+import { useAuth } from '../../utils/helper';
+import { article } from 'framer-motion/client';
+export default function Home({ showWindow, refresh }) {
+	// const { data, loading, error } = useFetch(
+	// 	'http://localhost:3000/api/articles'
+	// );
+	const [loading, setLoading] = useState(false);
+	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		setLoading(true);
+		useAuth('/articles')
+			.then((res) => {
+				setData(res.data);
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.log(error);
+				setLoading(false);
+			});
+	}, [refresh]);
 
 	console.log(data);
 	return (
@@ -73,6 +90,7 @@ export default function Home() {
 							<Article
 								key={article.id}
 								article={article}
+								showWindow={showWindow}
 							/>
 						))}
 				</div>

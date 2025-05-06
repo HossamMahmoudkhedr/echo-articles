@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Article from '../components/Article';
 import useFetch from '../hooks/useFetch';
 
-export default function AllArticles() {
+export default function AllArticles({ showWindow }) {
 	const { data, loading, error } = useFetch(
 		'http://localhost:3000/api/articles'
 	);
@@ -78,6 +78,7 @@ export default function AllArticles() {
 						<Article
 							article={article}
 							key={article.id}
+							showWindow={showWindow}
 						/>
 					))}
 			</div>
