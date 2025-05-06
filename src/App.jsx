@@ -107,7 +107,12 @@ function App() {
 				/>
 				<Route
 					path="/articles"
-					element={<AllArticles showWindow={showWindow} />}
+					element={
+						<AllArticles
+							showWindow={showWindow}
+							refresh={refresh}
+						/>
+					}
 				/>
 				<Route
 					path="/add-article"

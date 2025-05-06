@@ -1,11 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Article from '../components/Article';
 import useFetch from '../hooks/useFetch';
+import { useAuth } from '../../utils/helper';
 
-export default function AllArticles({ showWindow }) {
-	const { data, loading, error } = useFetch(
-		'http://localhost:3000/api/articles'
-	);
+export default function AllArticles({ showWindow, refresh }) {
+	// const { data, loading, error } = useFetch(
+	// 	'http://localhost:3000/api/articles'
+	// );
+	let currentPage = 1;
+	const articlesInPage = 5;
+	const [loading, setLoading] = useState(false);
+	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		setLoading(true);
+		useAuth('/articles')
+			.then((res) => {
+				setData(res.data);
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.log(error);
+				setLoading(false);
+			});
+	}, [refresh]);
+
 	const [show, setShow] = useState(false);
 	const showCategory = () => {
 		setShow(!show);
@@ -20,7 +39,7 @@ export default function AllArticles({ showWindow }) {
 					<label
 						htmlFor="name"
 						className="font-semibold">
-						Enter article name
+						Enter article title
 					</label>
 					<label className="input">
 						<svg
@@ -42,9 +61,18 @@ export default function AllArticles({ showWindow }) {
 						</svg>
 						<input
 							type="search"
-							name="name"
-							id="name"
+							name="title"
+							id="title"
 							className="grow"
+							onChange={(e) => {
+								if (e.target.value != '' && data && data.articles) {
+									const filterdData = data?.articles?.filter((article) => {
+										console.log(article.title.includes(e.target.value));
+										return article.title.includes(e.target.value);
+									});
+									setData(filterdData);
+								}
+							}}
 							placeholder="Search for an article"
 						/>
 					</label>
@@ -74,13 +102,34 @@ export default function AllArticles({ showWindow }) {
 			<div className="">
 				{data &&
 					data.articles &&
-					data.articles.map((article) => (
-						<Article
-							article={article}
-							key={article.id}
-							showWindow={showWindow}
-						/>
-					))}
+					data.articles
+						.slice(
+							(currentPage - 1) * articlesInPage,
+							currentPage * articlesInPage
+						)
+						.map((article) => (
+							<Article
+								article={article}
+								key={article.id}
+								showWindow={showWindow}
+							/>
+						))}
+			</div>
+			<div className="flex justify-center">
+				<div className="join">
+					{data &&
+						data.articles &&
+						Array(Math.ceil(data?.articles?.length / articlesInPage))
+							.fill(0)
+							.map((item, index) => (
+								<button
+									className={`join-item btn ${
+										currentPage == index + 1 ? 'btn-active' : ''
+									}`}>
+									{index + 1}
+								</button>
+							))}
+				</div>
 			</div>
 		</div>
 	);
