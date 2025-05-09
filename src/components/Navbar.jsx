@@ -78,7 +78,7 @@ export default function Navbar({ currentUser, logOut }) {
 							<div className="flex items-center gap-4">
 								<Link
 									onClick={closeSide}
-									to={`/profile/${currentUser.id}`}>
+									to={`/profile/${currentUser._id}`}>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"

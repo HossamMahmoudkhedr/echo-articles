@@ -4,6 +4,7 @@ const {
 	getAllAuthors,
 	login,
 	getAuthorData,
+	logOut,
 } = require('../controllers/authorsController');
 const authenticateToken = require('../middlewares/authenticateToken');
 
@@ -13,7 +14,9 @@ router.post('/signup', signup);
 
 router.post('/login', login);
 
-router.get('/', authenticateToken, getAllAuthors);
+router.get('/', getAllAuthors);
+
+router.get('/logout', authenticateToken, logOut);
 
 router.get('/:id', authenticateToken, getAuthorData);
 

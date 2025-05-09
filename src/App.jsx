@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -23,19 +23,34 @@ function App() {
 	const [articleId, setArticleID] = useState();
 	const hideFooterFrom = ['/login', '/sign-up'];
 	const hide = hideFooterFrom.includes(location.pathname);
+	const showAddArticle = ['/', '/articles', '/authors'].includes(
+		location.pathname
+	);
 	const [refresh, setRefresh] = useState(0);
 
 	useEffect(() => {
-		setCurrentUser(JSON.parse(localStorage.getItem('user')));
-	}, []);
-	const logOut = () => {
-		if (localStorage.getItem('user')) {
+		const loggedIn = Cookies.get('loggedIn');
+		if (loggedIn) {
+			setCurrentUser(JSON.parse(localStorage.getItem('user')));
+		} else {
 			localStorage.removeItem('user');
-			Cookies.remove('token');
-			toast.warning('You have been Logged out!');
-			setTimeout(() => {
-				window.location.href = '/';
-			}, 3000);
+			setCurrentUser(null);
+		}
+	}, []);
+	const logOut = async () => {
+		if (localStorage.getItem('user')) {
+			try {
+				const res = await useAuth('/authors/logout');
+				console.log(res);
+				localStorage.removeItem('user');
+				toast.warning('You have been Logged out!');
+				setTimeout(() => {
+					window.location.href = '/';
+				}, 3000);
+			} catch (error) {
+				toast.warning('Something went wrong, please try again');
+				console.log(error);
+			}
 		}
 	};
 	const showWindow = (id) => {
@@ -61,7 +76,7 @@ function App() {
 		<>
 			<ToastContainer />
 			{show && (
-				<div className="fixed flex justify-center items-center w-[100%] h-[100%] top-0 end-0 bg-[#00000085] z-[1]">
+				<div className="fixed flex justify-center items-center w-[100%] h-[100%] top-0 end-0 bg-[#00000085] z-[9]">
 					<div className="flex flex-col items-center text-center gap-6 bg-white z-[2] px-7 py-5 rounded-2xl">
 						{!loading && (
 							<>
@@ -100,6 +115,7 @@ function App() {
 					path="/"
 					element={
 						<Home
+							currentUser={currentUser}
 							showWindow={showWindow}
 							refresh={refresh}
 						/>
@@ -109,6 +125,7 @@ function App() {
 					path="/articles"
 					element={
 						<AllArticles
+							currentUser={currentUser}
 							showWindow={showWindow}
 							refresh={refresh}
 						/>
@@ -132,7 +149,12 @@ function App() {
 				/>
 				<Route
 					path="/article/:id"
-					element={<ArticleDetails />}
+					element={
+						<ArticleDetails
+							showWindow={showWindow}
+							currentUser={currentUser}
+						/>
+					}
 				/>
 				<Route
 					path="/authors"
@@ -144,6 +166,29 @@ function App() {
 				/>
 			</Routes>
 			{hide || <Footer />}
+			{showAddArticle && currentUser && (
+				<div
+					className="tooltip fixed bottom-20 end-20 z-1"
+					data-tip="Write new article">
+					<Link
+						to={'add-article'}
+						className="btn btn-circle bg-black text-white border-none btn-xl">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							strokeWidth={1.5}
+							stroke="currentColor"
+							className="size-9">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								d="M12 4.5v15m7.5-7.5h-15"
+							/>
+						</svg>
+					</Link>
+				</div>
+			)}
 		</>
 	);
 }

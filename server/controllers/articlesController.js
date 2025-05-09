@@ -65,9 +65,51 @@ async function editArticle(req, res) {
 	res.json({ message: 'Article has been updated successfully', article });
 }
 
+function createPagenation(articles, currentPage, articlesPerPage) {
+	const sliceOfArticles = articles.slice(
+		(currentPage - 1) * articlesPerPage,
+		currentPage * articlesPerPage
+	);
+	return {
+		articles: sliceOfArticles,
+		pages: Math.ceil(articles.length / articlesPerPage),
+		currentPage,
+	};
+}
+
 async function getAllArticles(req, res) {
-	const articles = await articleModel.find({}, { __v: 0 });
-	res.json({ articles });
+	const limit = req.query.limit;
+	const currentPage = req.query.currentPage || 1;
+	const search = req.query.search;
+
+	let articles;
+	const articlesPerPage = 5;
+
+	if (!limit && !search) {
+		articles = await articleModel.find({}, { __v: 0 });
+		response = { message: 'Success', articles };
+		if (currentPage) {
+			response = createPagenation(articles, currentPage, articlesPerPage);
+		}
+
+		res.json(response);
+	}
+
+	if (limit) {
+		articles = await articleModel.find({}, { __v: 0 }).limit(limit);
+		res.json({ articles });
+	}
+
+	if (search) {
+		articles = await articleModel.find({
+			title: { $regex: search, $options: 'i' },
+		});
+		response = { message: 'Success', articles };
+		if (currentPage) {
+			response = createPagenation(articles, currentPage, articlesPerPage);
+		}
+		res.json(response);
+	}
 }
 
 async function getArticleData(req, res) {
@@ -91,10 +133,25 @@ async function deleteArticle(req, res) {
 	res.json({ message: 'Article has been deleted successfully' });
 }
 
+async function searchArticle(req, res) {
+	const title = req.query.title;
+	let articles;
+	if (title) {
+		articles = await articleModel.find({
+			title: { $regex: title, $options: 'i' },
+		});
+	} else {
+		articles = await articleModel.find({});
+	}
+
+	res.json({ message: 'Success', articles });
+}
+
 module.exports = {
 	addArticle,
 	editArticle,
 	getAllArticles,
 	getArticleData,
 	deleteArticle,
+	searchArticle,
 };

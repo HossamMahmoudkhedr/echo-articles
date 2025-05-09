@@ -4,15 +4,17 @@ import Cookies from 'js-cookie';
 export async function fetchData(endpoint, method = 'get', data = undefined) {
 	const response = await axios[method](
 		`http://localhost:3000/api${endpoint}`,
-		data
+		data,
+		{ withCredentials: true }
 	);
 	return response;
 }
 
 export async function useAuth(endpoint, method = 'get', data = undefined) {
 	const config = {
+		withCredentials: true,
 		headers: {
-			authorization: `Bearer ${Cookies.get('token')}`,
+			// authorization: `Bearer ${Cookies.get('token')}`,
 		},
 	};
 

@@ -18,7 +18,7 @@ async function signup(req, res) {
 		});
 	}
 
-	const found = await authorModel.findOne({ email: body.email });
+	const found = await authorModel.findOne({ email: body.email.toLowerCase() });
 
 	if (found) {
 		return res.json({ message: 'User Already exists' });
@@ -43,7 +43,7 @@ async function signup(req, res) {
 async function login(req, res) {
 	const body = req.body;
 
-	const user = await authorModel.findOne({ email: body.email });
+	const user = await authorModel.findOne({ email: body.email.toLowerCase() });
 
 	if (!user)
 		return res.status(404).json({ message: 'Email or password is worng!' });
@@ -55,10 +55,24 @@ async function login(req, res) {
 
 	const token = jwt.sign(
 		{ userId: user.id, email: user.email },
-		process.env.JWT_SECRET
+		process.env.JWT_SECRET,
+		{ expiresIn: '30d' }
 	);
 
-	res.json({ message: 'You have been logged in successfully', token, user });
+	res.cookie('token', token, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'strict',
+		maxAge: 30 * 24 * 60 * 60 * 1000,
+	});
+
+	res.cookie('loggedIn', true, {
+		httpOnly: false,
+		secure: false,
+		maxAge: 30 * 24 * 60 * 60 * 1000,
+	});
+
+	res.json({ message: 'You have been logged in successfully', user });
 }
 
 async function getAllAuthors(req, res) {
@@ -75,9 +89,20 @@ async function getAuthorData(req, res) {
 	res.json({ message: 'Authro found', author });
 }
 
+function logOut(req, res) {
+	res.clearCookie('token', {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'strict',
+	});
+	res.clearCookie('loggedIn');
+	res.json({ message: 'You have been logged out!' });
+}
+
 module.exports = {
 	signup,
 	login,
+	logOut,
 	getAllAuthors,
 	getAuthorData,
 };

@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 import Author from '../components/Author';
 import useFetch from '../hooks/useFetch';
 import { useAuth } from '../../utils/helper';
-import { article } from 'framer-motion/client';
-export default function Home({ showWindow, refresh }) {
+import { article, div } from 'framer-motion/client';
+export default function Home({ showWindow, refresh, currentUser }) {
 	// const { data, loading, error } = useFetch(
 	// 	'http://localhost:3000/api/articles'
 	// );
@@ -17,7 +17,7 @@ export default function Home({ showWindow, refresh }) {
 
 	useEffect(() => {
 		setLoading(true);
-		useAuth('/articles')
+		useAuth('/articles?limit=8')
 			.then((res) => {
 				setData(res.data);
 				setLoading(false);
@@ -31,27 +31,6 @@ export default function Home({ showWindow, refresh }) {
 	console.log(data);
 	return (
 		<div className="container">
-			<div
-				className="tooltip fixed bottom-20 end-20 z-1"
-				data-tip="Write new article">
-				<Link
-					to={'add-article'}
-					className="btn btn-circle bg-black text-white border-none btn-xl">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						strokeWidth={1.5}
-						stroke="currentColor"
-						className="size-9">
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							d="M12 4.5v15m7.5-7.5h-15"
-						/>
-					</svg>
-				</Link>
-			</div>
 			<div>
 				<h1 className="header">ART & LIFE</h1>
 				<div className="py-5 px-0 md:p-5 bg-black flex">
@@ -81,42 +60,44 @@ export default function Home({ showWindow, refresh }) {
 				</div>
 				<div>
 					{loading && (
-						<span className="loading loading-spinner loading-lg"></span>
+						<div className="w-[100%] h-[100%] flex items-center justify-center">
+							<span className="loading loading-spinner loading-lg"></span>
+						</div>
 					)}
-					{data &&
-						data?.articles &&
-						!loading &&
+					{!loading &&
 						data?.articles?.map((article) => (
 							<Article
-								key={article.id}
+								currentUser={currentUser}
+								key={article._id}
 								article={article}
 								showWindow={showWindow}
 							/>
 						))}
 				</div>
-				<div className="pt-10 pb-17 px-6 md:px-0 border-b-2">
-					<Link
-						to="/articles"
-						className="flex items-center gap-2 font-bold transition-all duration-300 hover:gap-4 cursor-pointer w-fit">
-						All Articles
-						<span className="mt-[1px]">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth="3"
-								stroke="currentColor"
-								className="size-4">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-								/>
-							</svg>
-						</span>
-					</Link>
-				</div>
-
+				{!loading && data?.articles && (
+					<div className="pt-10 pb-17 px-6 md:px-0 border-b-2">
+						<Link
+							to="/articles"
+							className="flex items-center gap-2 font-bold transition-all duration-300 hover:gap-4 cursor-pointer w-fit">
+							All Articles
+							<span className="mt-[1px]">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth="3"
+									stroke="currentColor"
+									className="size-4">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+									/>
+								</svg>
+							</span>
+						</Link>
+					</div>
+				)}
 				{/* <div>
 					<div className="flex items-center justify-between">
 						<h2 className="sub-title my-10">AUTHORS</h2>

@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 import { formatDate, useAuth } from '../../utils/helper';
 import { toast, ToastContainer } from 'react-toastify';
 
-export default function Article({ vertical, article, showWindow }) {
+export default function Article({
+	vertical,
+	article,
+	showWindow,
+	currentUser,
+}) {
 	return (
 		<div
 			className={`article relative flex flex-col items-center ${
@@ -12,7 +17,7 @@ export default function Article({ vertical, article, showWindow }) {
 					? 'md:flex-col border-1 py-5 px-6 h-fit md:gap-6'
 					: 'article md:flex-row h-[100%] my-14 pb-9 md:gap-12'
 			}    `}>
-			{article.author._id === JSON.parse(localStorage.getItem('user'))._id && (
+			{article.author._id === currentUser?._id && (
 				<div className="contorl-article absolute top-0 end-5 flex items-center gap-4">
 					<Link
 						to={`/edit-article/${article._id}`}

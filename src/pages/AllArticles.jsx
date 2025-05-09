@@ -3,32 +3,81 @@ import Article from '../components/Article';
 import useFetch from '../hooks/useFetch';
 import { useAuth } from '../../utils/helper';
 
-export default function AllArticles({ showWindow, refresh }) {
+let filteredData = [];
+let pagesNo = 0;
+export default function AllArticles({ showWindow, refresh, currentUser }) {
 	// const { data, loading, error } = useFetch(
 	// 	'http://localhost:3000/api/articles'
 	// );
-	let currentPage = 1;
-	const articlesInPage = 5;
+	const [currentPage, setCurrentPage] = useState(1);
 	const [loading, setLoading] = useState(false);
 	const [data, setData] = useState([]);
+	const [search, setSearch] = useState();
+	const [pages, setPages] = useState(0);
+
+	const handleSearch = async (e) => {
+		const value = e.target.value;
+		setSearch(value);
+	};
 
 	useEffect(() => {
-		setLoading(true);
-		useAuth('/articles')
-			.then((res) => {
-				setData(res.data);
-				setLoading(false);
-			})
-			.catch((error) => {
-				console.log(error);
-				setLoading(false);
-			});
-	}, [refresh]);
+		if (!search) {
+			console.log('hi');
+			setLoading(true);
+			useAuth(`/articles?currentPage=${currentPage}`)
+				.then((res) => {
+					setData(res.data.articles);
+					filteredData = res?.data?.articles;
+					setPages(res.data.pages);
+					pagesNo = res.data.pages;
+					setLoading(false);
+				})
+				.catch((error) => {
+					console.log(error);
+					setLoading(false);
+				});
+		}
+	}, [refresh, currentPage]);
 
+	useEffect(() => {
+		let time;
+		setLoading(true);
+		if (search) {
+			time = setTimeout(async () => {
+				try {
+					const response = await useAuth(
+						`/articles?search=${search}&currentPage=${currentPage}`
+					);
+					console.log(response);
+					filteredData = response.data.articles;
+					pagesNo = response.data.pages;
+					setLoading(false);
+				} catch (error) {
+					console.log(error);
+					setLoading(false);
+				}
+			}, 1000);
+		} else {
+			setLoading(false);
+			filteredData = data;
+			pagesNo = pages;
+		}
+		return () => {
+			clearTimeout(time);
+		};
+	}, [search, currentPage]);
+	console.log(pages);
+
+	console.log(filteredData);
 	const [show, setShow] = useState(false);
 	const showCategory = () => {
 		setShow(!show);
 	};
+
+	const handlePagination = (page) => {
+		setCurrentPage(page);
+	};
+
 	return (
 		<div className="container">
 			<div>
@@ -63,16 +112,9 @@ export default function AllArticles({ showWindow, refresh }) {
 							type="search"
 							name="title"
 							id="title"
+							value={search}
 							className="grow"
-							onChange={(e) => {
-								if (e.target.value != '' && data && data.articles) {
-									const filterdData = data?.articles?.filter((article) => {
-										console.log(article.title.includes(e.target.value));
-										return article.title.includes(e.target.value);
-									});
-									setData(filterdData);
-								}
-							}}
+							onChange={handleSearch}
 							placeholder="Search for an article"
 						/>
 					</label>
@@ -100,29 +142,32 @@ export default function AllArticles({ showWindow, refresh }) {
 				</div>
 			</div>
 			<div className="">
-				{data &&
-					data.articles &&
-					data.articles
-						.slice(
-							(currentPage - 1) * articlesInPage,
-							currentPage * articlesInPage
-						)
-						.map((article) => (
-							<Article
-								article={article}
-								key={article.id}
-								showWindow={showWindow}
-							/>
-						))}
+				{loading && (
+					<div className="w-[100%] h-[100%] flex items-center justify-center">
+						<span className="loading loading-spinner loading-lg"></span>
+					</div>
+				)}
+				{!loading &&
+					filteredData &&
+					filteredData.map((article) => (
+						<Article
+							key={article._id}
+							currentUser={currentUser}
+							article={article}
+							showWindow={showWindow}
+						/>
+					))}
 			</div>
 			<div className="flex justify-center">
 				<div className="join">
-					{data &&
-						data.articles &&
-						Array(Math.ceil(data?.articles?.length / articlesInPage))
+					{filteredData &&
+						Array(pagesNo)
 							.fill(0)
 							.map((item, index) => (
 								<button
+									onClick={() => {
+										handlePagination(index + 1);
+									}}
 									className={`join-item btn ${
 										currentPage == index + 1 ? 'btn-active' : ''
 									}`}>

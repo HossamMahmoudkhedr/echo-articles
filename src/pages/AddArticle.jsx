@@ -229,14 +229,14 @@ export default function AddArticle({ currentUser }) {
 						<sapn className="text-sm text-error">{errors.body?.message}</sapn>
 					)}
 					<div>
-						<div className="flex gap-3 items-center">
+						<div className="flex gap-3 items-center flex-wrap">
 							{tags.length > 0 && (
-								<div className="flex gap-3 items-center">
+								<div className="flex gap-3 items-center flex-wrap ">
 									{tags.map((tag, index) => (
 										<div
 											key={tag}
 											className="badge badge-neutral badge-outline flex gap-3 py-3 items-center">
-											{tag}
+											<p>{tag}</p>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												fill="none"
@@ -262,7 +262,7 @@ export default function AddArticle({ currentUser }) {
 								name="tags"
 								id="tags"
 								disabled={tags.length === 5}
-								className="w-[100%] disabled:placeholder:text-gray-300"
+								className="flex-1 disabled:placeholder:text-gray-300"
 								onBlur={handleAddTag}
 								onKeyDown={(e) => {
 									if (e.key == 'Enter') handleAddTag(e);

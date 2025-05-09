@@ -5,6 +5,7 @@ const {
 	editArticle,
 	getAllArticles,
 	getArticleData,
+	searchArticle,
 	deleteArticle,
 } = require('../controllers/articlesController');
 
@@ -16,8 +17,9 @@ router.post('/edit-article/:id', authenticateToken, editArticle);
 
 router.get('/delete-article/:id', authenticateToken, deleteArticle);
 
-router.get('/', authenticateToken, getAllArticles);
+router.get('/search', searchArticle);
+router.get('/', getAllArticles);
 
-router.get('/:id', authenticateToken, getArticleData);
+router.get('/:id', getArticleData);
 
 module.exports = router;

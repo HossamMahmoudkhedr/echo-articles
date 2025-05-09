@@ -20,7 +20,6 @@ export default function Login() {
 		try {
 			const response = await fetchData('/authors/login', 'post', data);
 
-			Cookies.set('token', response.data.token);
 			localStorage.setItem('user', JSON.stringify(response.data.user));
 			toast.success('You have been logged in');
 
