@@ -157,7 +157,7 @@ export default function AddArticle({ currentUser }) {
 					<span className="loading loading-spinner loading-lg"></span>
 				</div>
 			)}
-			<ToastContainer />
+			{/* <ToastContainer /> */}
 			<div className="container">
 				<div className="my-10">
 					<PageHead text={'Add Article'} />

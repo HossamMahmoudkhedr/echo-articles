@@ -76,8 +76,8 @@ async function login(req, res) {
 }
 
 async function getAllAuthors(req, res) {
-	const authros = await authorModel.find({}, { __v: 0 });
-	res.json({ authros });
+	const authors = await authorModel.find({}, { __v: 0 });
+	res.json({ authors });
 }
 
 async function getAuthorData(req, res) {

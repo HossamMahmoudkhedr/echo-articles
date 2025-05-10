@@ -65,6 +65,7 @@ export default function Home({ showWindow, refresh, currentUser }) {
 						</div>
 					)}
 					{!loading &&
+						data?.articles?.length > 0 &&
 						data?.articles?.map((article) => (
 							<Article
 								currentUser={currentUser}
@@ -73,6 +74,11 @@ export default function Home({ showWindow, refresh, currentUser }) {
 								showWindow={showWindow}
 							/>
 						))}
+					{!loading && (!data?.articles || data?.articles?.length === 0) && (
+						<div className="flex items-center justify-center">
+							<p className="text-gray-400">No articles found, add one!</p>
+						</div>
+					)}
 				</div>
 				{!loading && data?.articles && (
 					<div className="pt-10 pb-17 px-6 md:px-0 border-b-2">

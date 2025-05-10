@@ -1,4 +1,10 @@
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import {
+	Link,
+	Route,
+	Routes,
+	useLocation,
+	useNavigate,
+} from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -22,6 +28,7 @@ function App() {
 	const [loading, setLoading] = useState(false);
 	const [articleId, setArticleID] = useState();
 	const hideFooterFrom = ['/login', '/sign-up'];
+	const navigate = useNavigate();
 	const hide = hideFooterFrom.includes(location.pathname);
 	const showAddArticle = ['/', '/articles', '/authors'].includes(
 		location.pathname
@@ -66,6 +73,9 @@ function App() {
 			setLoading(false);
 			setRefresh((prev) => prev + 1);
 			toast.success('Article has been deleted successfully');
+			if (location.pathname.split('/')[1] === 'article') {
+				navigate('/articles');
+			}
 		} catch (error) {
 			setLoading(false);
 			setShow(false);

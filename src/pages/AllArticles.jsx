@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Article from '../components/Article';
 import useFetch from '../hooks/useFetch';
 import { useAuth } from '../../utils/helper';
+import useDebounce from '../hooks/useDebounce';
 
-let filteredData = [];
-let pagesNo = 0;
 export default function AllArticles({ showWindow, refresh, currentUser }) {
 	// const { data, loading, error } = useFetch(
 	// 	'http://localhost:3000/api/articles'
@@ -14,6 +13,7 @@ export default function AllArticles({ showWindow, refresh, currentUser }) {
 	const [data, setData] = useState([]);
 	const [search, setSearch] = useState();
 	const [pages, setPages] = useState(0);
+	const debouncevalue = useDebounce(search, 500);
 
 	const handleSearch = async (e) => {
 		const value = e.target.value;
@@ -21,54 +21,23 @@ export default function AllArticles({ showWindow, refresh, currentUser }) {
 	};
 
 	useEffect(() => {
-		if (!search) {
-			console.log('hi');
+		(async function () {
 			setLoading(true);
-			useAuth(`/articles?currentPage=${currentPage}`)
-				.then((res) => {
-					setData(res.data.articles);
-					filteredData = res?.data?.articles;
-					setPages(res.data.pages);
-					pagesNo = res.data.pages;
-					setLoading(false);
-				})
-				.catch((error) => {
-					console.log(error);
-					setLoading(false);
-				});
-		}
-	}, [refresh, currentPage]);
+			const endPoint = debouncevalue
+				? `/articles?search=${search}&currentPage=${currentPage}`
+				: `/articles?currentPage=${currentPage}`;
+			try {
+				const res = await useAuth(endPoint);
+				setData(res.data.articles);
+				setPages(res.data.pages);
+				setLoading(false);
+			} catch (error) {
+				console.log(error);
+				setLoading(false);
+			}
+		})();
+	}, [debouncevalue, currentPage, refresh]);
 
-	useEffect(() => {
-		let time;
-		setLoading(true);
-		if (search) {
-			time = setTimeout(async () => {
-				try {
-					const response = await useAuth(
-						`/articles?search=${search}&currentPage=${currentPage}`
-					);
-					console.log(response);
-					filteredData = response.data.articles;
-					pagesNo = response.data.pages;
-					setLoading(false);
-				} catch (error) {
-					console.log(error);
-					setLoading(false);
-				}
-			}, 1000);
-		} else {
-			setLoading(false);
-			filteredData = data;
-			pagesNo = pages;
-		}
-		return () => {
-			clearTimeout(time);
-		};
-	}, [search, currentPage]);
-	console.log(pages);
-
-	console.log(filteredData);
 	const [show, setShow] = useState(false);
 	const showCategory = () => {
 		setShow(!show);
@@ -143,13 +112,18 @@ export default function AllArticles({ showWindow, refresh, currentUser }) {
 			</div>
 			<div className="">
 				{loading && (
-					<div className="w-[100%] h-[100%] flex items-center justify-center">
+					<div className="w-[100%] h-[100%] flex items-center justify-center my-5">
 						<span className="loading loading-spinner loading-lg"></span>
 					</div>
 				)}
+				{!loading && (!data || data.length === 0) && (
+					<div className="flex items-center justify-center">
+						<p className="text-gray-400">No articles found, add one!</p>
+					</div>
+				)}
 				{!loading &&
-					filteredData &&
-					filteredData.map((article) => (
+					data &&
+					data.map((article) => (
 						<Article
 							key={article._id}
 							currentUser={currentUser}
@@ -160,11 +134,12 @@ export default function AllArticles({ showWindow, refresh, currentUser }) {
 			</div>
 			<div className="flex justify-center">
 				<div className="join">
-					{filteredData &&
-						Array(pagesNo)
+					{data &&
+						Array(pages)
 							.fill(0)
 							.map((item, index) => (
 								<button
+									key={index}
 									onClick={() => {
 										handlePagination(index + 1);
 									}}

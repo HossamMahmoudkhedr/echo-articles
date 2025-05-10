@@ -3,7 +3,10 @@ import Author from '../components/Author';
 import useFetch from '../hooks/useFetch';
 
 export default function Authors() {
-	const { data, loading, error } = useFetch('http://localhost:3000/users');
+	const { data, loading, error } = useFetch(
+		'http://localhost:3000/api/authors'
+	);
+	console.log(data);
 	return (
 		<div className="container">
 			<div>
@@ -12,7 +15,7 @@ export default function Authors() {
 			<div>
 				{data &&
 					!loading &&
-					data.map((author) => (
+					data?.authors?.map((author) => (
 						<div
 							key={author.id}
 							className="author relative">

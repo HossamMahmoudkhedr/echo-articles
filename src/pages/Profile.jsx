@@ -63,10 +63,10 @@ export default function Profile({ currentUser }) {
 					</div>
 				</div>
 
-				<hr className="my-10 md:my-15" />
+				{/* <hr className="my-10 md:my-15" />
 				<h2 className="text-4xl md:text-6xl font-bold mb-10 md:mb-20">
 					Artilces by {fullName}
-				</h2>
+				</h2> */}
 
 				{/* <div className="flex lg:flex-row lg:flex-wrap flex-col gap-4">
 					<div className="lg:w-[32%]">

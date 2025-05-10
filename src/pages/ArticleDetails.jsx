@@ -19,7 +19,7 @@ export default function ArticleDetails({ currentUser, showWindow }) {
 		setArticle(data?.article);
 	}, [data]);
 
-	if (loading) return <div>Loading...</div>;
+	if (loading) return <div className="container">Loading...</div>;
 	return (
 		<div className="container">
 			<div>
@@ -150,7 +150,7 @@ export default function ArticleDetails({ currentUser, showWindow }) {
 						{article?.body}
 					</div>
 				</div>
-				<hr className="text-black border-1 my-16" />
+				{/* <hr className="text-black border-1 my-16" />
 				<div>
 					<div className="flex justify-between items-center">
 						<h2 className="sub-title my-10">LATEST POSTS</h2>
@@ -177,16 +177,16 @@ export default function ArticleDetails({ currentUser, showWindow }) {
 					</div>
 					<div className="flex lg:flex-row lg:flex-wrap flex-col gap-4">
 						<div className="lg:w-[32%]">
-							{/* <Article vertical={true} /> */}
+							<Article vertical={true} />
 						</div>
 						<div className="lg:w-[32%]">
-							{/* <Article vertical={true} /> */}
+							<Article vertical={true} />
 						</div>
 						<div className="lg:w-[32%]">
-							{/* <Article vertical={true} /> */}
+							<Article vertical={true} />
 						</div>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);
