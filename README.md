@@ -133,7 +133,7 @@ cd client
 npm run dev
 ```
 
-## 🧪 Future Improvements
+## ⭐ Future Improvements
 
 - Rich text editor for article creation
 - Commenting system
